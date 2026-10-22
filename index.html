@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMSP Classroom Companion — Dilemma & Topic Connection Exemplar</title>
+    <style>
+        :root {
+            --fmsp-navy: #002B49;
+            --fmsp-gold: #D4AF37;
+            --bg-light: #F8F9FA;
+            --border-color: #DEE2E6;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: #333;
+        }
+        header {
+            background-color: var(--fmsp-navy);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--fmsp-gold);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        header span {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 20px;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--fmsp-navy);
+        }
+        .badge {
+            background: var(--fmsp-gold);
+            color: var(--fmsp-navy);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #495057;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+        textarea {
+            resize: vertical;
+            height: 65px;
+        }
+        .sc-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            background: #F1F3F5;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+        .sc-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        .sc-item input[type="text"] {
+            border: none;
+            background: transparent;
+            font-weight: 500;
+        }
+        .strategy-btn {
+            background: #E9ECEF;
+            border: 1px solid #CED4DA;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            transition: all 0.2s;
+        }
+        .strategy-btn:hover, .strategy-btn.active {
+            background: var(--fmsp-navy);
+            color: white;
+            border-color: var(--fmsp-navy);
+        }
+        .reflection-box {
+            background: #E8F4FD;
+            border-left: 4px solid #1890FF;
+            padding: 12px;
+            border-radius: 0 4px 4px 0;
+            margin-top: 15px;
+        }
+        .reflection-box p {
+            margin: 0;
+            font-weight: 600;
+            color: #003A8C;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>FMSP Classroom Companion</h1>
+    <span>EL Writing: Dilemma, Choice & Topic Connection (PLAN &bull; MONITOR &bull; REFLECT)</span>
+</header>
+
+<div class="container">
+    <!-- LEFT PANEL: WHAT AM I LEARNING? -->
+    <div class="card">
+        <div class="card-header">
+            <span class="badge">PLAN</span>
+            <h2>WHAT Am I Learning? (Dilemma & Topic Analysis)</h2>
+        </div>
+
+        <label for="waltInput">🎯 WALT (Learning Intention):</label>
+        <textarea id="waltInput">We Are Learning To evaluate the central dilemma in composition drafts, analyze character choices, craft a meaningful conclusion, and explicitly connect the resolution back to the topic.</textarea>
+
+        <label>✅ WILF / Success Criteria (4 Pillars of Composition):</label>
+
+        <div class="sc-item">
+            <input type="checkbox" id="sc1">
+            <input type="text" value="🟢 Level 1 (Dilemma & Choices): Identify the core dilemma and list the character's options." id="sc1Text">
+        </div>
+        <div class="sc-item">
+            <input type="checkbox" id="sc2">
+            <input type="text" value="🟡 Level 2 (Conclusion & Growth): Craft a conclusion showing realistic consequences and character growth." id="sc2Text">
+        </div>
+        <div class="sc-item">
+            <input type="checkbox" id="sc3">
+            <input type="text" value="🔵 Level 3 (Topic Connection): Explicitly weave the climax resolution & lesson back to the composition title." id="sc3Text">
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: HOW AM I LEARNING? -->
+    <div class="card">
+        <div class="card-header">
+            <span class="badge">MONITOR & REFLECT</span>
+            <h2>HOW Am I Learning? (Thinking Strategies)</h2>
+        </div>
+
+        <label>💡 Stuck Moment Strategy Check (Dilemma & Resolution):</label>
+        <p style="font-size: 0.8rem; color: #6C757D; margin-top: 0;">If stuck evaluating your narrative choices or conclusion, select your strategy:</p>
+        <div>
+            <button class="strategy-btn" onclick="selectStrategy(this)">⚖️ Consequence Mapping (Choices)</button>
+            <button class="strategy-btn" onclick="selectStrategy(this)">🎯 Link Climax to Topic</button>
+            <button class="strategy-btn" onclick="selectStrategy(this)">💡 Evaluate Character Growth</button>
+            <button class="strategy-btn" onclick="selectStrategy(this)">🔍 Audit Resolution vs Topic</button>
+        </div>
+
+        <div class="reflection-box">
+            <label style="color: #003A8C; margin-top: 0;">🤔 Metacognitive Writing Reflection:</label>
+            <p id="reflectionPrompt">"How did evaluating the character's choices help me create a convincing conclusion that connects directly back to the topic?"</p>
+            <button onclick="rotatePrompt()" style="margin-top: 10px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer;">🔄 Rotate Reflection Question</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Universal 5 Metacognitive Questions tailored for Dilemma, Choice, Conclusion & Topic Connection
+    const questions = [
+        '"What was the central dilemma in my composition, and why was it challenging for the protagonist?"',
+        '"How did weighing the character\'s choices prevent my story from having a cliché or unrealistic plot?"',
+        '"How did evaluating the character\'s choices help me create a convincing conclusion that connects directly back to the topic?"',
+        '"In what ways did my final conclusion and character reflection tie back to the given composition title?"',
+        '"What strategy helped me ensure that the outcome of the dilemma was meaningful rather than rushed?"'
+    ];
+    let currentIdx = 2;
+
+    function rotatePrompt() {
+        currentIdx = (currentIdx + 1) % questions.length;
+        document.getElementById('reflectionPrompt').innerText = questions[currentIdx];
+    }
+
+    function selectStrategy(btn) {
+        document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
