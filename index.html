@@ -4,36 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FMSP Classroom Companion</title>
-    
-    <script>
-        // LAUNCHER LOGIC: Check if the URL has "?widget=true"
-        // If not, render the launcher button and stop loading the rest of the page.
-        const urlParams = new URLSearchParams(window.location.search);
-        if (!urlParams.has('widget')) {
-            document.write(`
-                <div style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; font-family: -apple-system, sans-serif; background-color: #F8F9FA; color: #333;">
-                    <div style="text-align:center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #DEE2E6;">
-                        <h1 style="color: #002B49; margin-top: 0;">FMSP Classroom Companion</h1>
-                        <p style="color: #6C757D; margin-bottom: 25px;">Click below to detach and launch the floating toolbar.</p>
-                        <button onclick="launchWidget()" style="background: #002B49; color: white; border: 2px solid #D4AF37; padding: 12px 24px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s;">
-                            🚀 Launch Floating Widget
-                        </button>
-                    </div>
-                </div>
-            `);
-            
-            function launchWidget() {
-                // Opens this exact same file, but adds "?widget=true" to the URL
-                // popup=yes strips the browser tabs and URL bar
-                const widgetUrl = window.location.href.split('?')[0] + "?widget=true";
-                window.open(widgetUrl, "FMSP_Companion", "width=400,height=800,popup=yes,menubar=no,toolbar=no,location=no,status=no");
-            }
-            // Halt execution so the widget UI doesn't render in the main tab
-            window.stop();
-        }
-    </script>
-
-    <!-- WIDGET UI (Only renders in the popup window) -->
     <style>
         :root {
             --fmsp-navy: #002B49;
@@ -47,9 +17,66 @@
             padding: 0;
             background-color: var(--bg-light);
             color: #333;
-            display: flex;
+        }
+
+        /* --- LAUNCHER SCREEN STYLES --- */
+        #launcherScreen {
+            display: none; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            align-items: center; 
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .launcher-box {
+            width: 100%;
+            max-width: 600px;
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            border: 1px solid var(--border-color);
+        }
+        .launcher-box h1 { color: var(--fmsp-navy); margin-top: 0; text-align: center; }
+        .launcher-box p { color: #6C757D; text-align: center; margin-bottom: 25px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; color: var(--fmsp-navy); }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .form-group textarea { resize: vertical; height: 70px; }
+        
+        .button-group { display: flex; gap: 10px; margin-top: 25px; }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-launch { background: var(--fmsp-navy); color: white; border: 2px solid var(--fmsp-gold); }
+        .btn-launch:hover { background: #003A8C; }
+        .btn-ai { background: #E8F4FD; color: #003A8C; border: 1px solid #1890FF; }
+        .btn-ai:hover { background: #bae0ff; }
+
+        /* --- WIDGET UI STYLES --- */
+        #fmspWidget {
+            display: none; 
             flex-direction: column;
             height: 100vh;
+            width: 100%;
+            background-color: var(--bg-light);
         }
         header {
             background-color: var(--fmsp-navy);
@@ -102,16 +129,7 @@
             margin-top: 10px;
             margin-bottom: 6px;
         }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 0.85rem;
-            font-family: inherit;
-        }
-        textarea { resize: vertical; height: 80px; }
+        
         .sc-item {
             display: flex;
             align-items: flex-start;
@@ -120,9 +138,38 @@
             padding: 8px;
             border-radius: 4px;
         }
-        .sc-item input[type="checkbox"] { margin-right: 8px; margin-top: 3px; transform: scale(1.1); flex-shrink: 0; }
-        .sc-item input[type="text"] { border: none; background: transparent; font-weight: 500; padding: 0; }
+        .sc-item input[type="checkbox"] { 
+            margin-right: 10px; 
+            margin-top: 4px; 
+            transform: scale(1.1); 
+            flex-shrink: 0; 
+        }
         
+        /* THE FIX: Using contenteditable div instead of input for auto word-wrap */
+        .wilf-text {
+            flex: 1;
+            min-height: 20px;
+            outline: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            line-height: 1.4;
+            word-wrap: break-word;
+            padding: 2px 0;
+        }
+        .wilf-text:focus { border-bottom: 1px dashed var(--fmsp-navy); }
+        
+        #widgetWalt {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.85rem;
+            font-family: inherit;
+            resize: vertical; 
+            height: 80px;
+        }
+
         .strategy-btn {
             background: #E9ECEF;
             border: 1px solid #CED4DA;
@@ -161,68 +208,144 @@
             width: 100%;
             transition: all 0.2s;
         }
-        .rotate-btn:hover {
-            background: #1890FF;
-            color: white;
-        }
+        .rotate-btn:hover { background: #1890FF; color: white; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>FMSP Classroom Companion</h1>
-        <span>EL Writing: Dilemma, Choice & Topic Connection</span>
-    </header>
-
-    <div class="container">
-        <!-- PLAN Card -->
-        <div class="card">
-            <div class="card-header">
-                <span class="badge">PLAN</span>
-                <h2>WHAT Am I Learning?</h2>
-            </div>
-            <label for="waltInput">🎯 WALT (Learning Intention):</label>
-            <textarea id="waltInput">We Are Learning To evaluate the central dilemma in composition drafts, analyze character choices, craft a meaningful conclusion, and explicitly connect the resolution back to the topic.</textarea>
+    <!-- LAUNCHER SCREEN -->
+    <div id="launcherScreen">
+        <div class="launcher-box">
+            <h1>FMSP Classroom Companion</h1>
+            <p>Configure your lesson intentions before launching the widget.</p>
             
-            <label>✅ WILF / Success Criteria:</label>
-            <div class="sc-item">
-                <input type="checkbox" id="sc1">
-                <input type="text" value="🟢 Level 1: Identify the core dilemma and options." id="sc1Text">
+            <div class="form-group">
+                <label>🎯 WALT (Learning Intention):</label>
+                <textarea id="setupWalt">We Are Learning To evaluate the central dilemma in composition drafts, analyze character choices, craft a meaningful conclusion, and explicitly connect the resolution back to the topic.</textarea>
             </div>
-            <div class="sc-item">
-                <input type="checkbox" id="sc2">
-                <input type="text" value="🟡 Level 2: Craft a conclusion showing consequences." id="sc2Text">
+            <div class="form-group">
+                <label>🟢 WILF 1 (Level 1):</label>
+                <input type="text" id="setupWilf1" value="🟢 Level 1: Identify the core dilemma and options.">
             </div>
-            <div class="sc-item">
-                <input type="checkbox" id="sc3">
-                <input type="text" value="🔵 Level 3: Weave the climax back to the topic." id="sc3Text">
+            <div class="form-group">
+                <label>🟡 WILF 2 (Level 2):</label>
+                <input type="text" id="setupWilf2" value="🟡 Level 2: Craft a conclusion showing consequences.">
+            </div>
+            <div class="form-group">
+                <label>🔵 WILF 3 (Level 3):</label>
+                <input type="text" id="setupWilf3" value="🔵 Level 3: Weave the climax back to the topic.">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-ai" onclick="copyAIPrompt()">✨ Copy AI Prompt</button>
+                <button class="btn btn-launch" onclick="launchWidget()">🚀 Launch Widget</button>
             </div>
         </div>
+    </div>
 
-        <!-- MONITOR & REFLECT Card -->
-        <div class="card">
-            <div class="card-header">
-                <span class="badge">MONITOR & REFLECT</span>
-                <h2>HOW Am I Learning?</h2>
+    <!-- WIDGET UI (Popup) -->
+    <div id="fmspWidget">
+        <header>
+            <h1>FMSP Classroom Companion</h1>
+            <span>EL Writing: Dilemma, Choice & Topic Connection</span>
+        </header>
+
+        <div class="container">
+            <!-- PLAN Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">PLAN</span>
+                    <h2>WHAT Am I Learning?</h2>
+                </div>
+                <label>🎯 WALT (Learning Intention):</label>
+                <textarea id="widgetWalt"></textarea>
+                
+                <label>✅ WILF / Success Criteria:</label>
+                <div class="sc-item">
+                    <input type="checkbox">
+                    <div id="widgetWilf1" class="wilf-text" contenteditable="true"></div>
+                </div>
+                <div class="sc-item">
+                    <input type="checkbox">
+                    <div id="widgetWilf2" class="wilf-text" contenteditable="true"></div>
+                </div>
+                <div class="sc-item">
+                    <input type="checkbox">
+                    <div id="widgetWilf3" class="wilf-text" contenteditable="true"></div>
+                </div>
             </div>
-            <label>💡 Stuck Moment Strategy Check:</label>
-            <p style="font-size: 0.75rem; color: #6C757D; margin-top: 0; margin-bottom: 8px;">If stuck evaluating choices, select your strategy:</p>
-            <div>
-                <button class="strategy-btn" onclick="selectStrategy(this)">⚖️ Consequence Mapping</button>
-                <button class="strategy-btn" onclick="selectStrategy(this)">🎯 Link Climax to Topic</button>
-                <button class="strategy-btn" onclick="selectStrategy(this)">💡 Evaluate Growth</button>
-                <button class="strategy-btn" onclick="selectStrategy(this)">🔍 Audit Resolution</button>
-            </div>
-            
-            <div class="reflection-box">
-                <label style="color: #003A8C; margin-top: 0; margin-bottom: 6px;">🤔 Metacognitive Reflection:</label>
-                <p id="reflectionPrompt">"How did evaluating the character's choices help me create a convincing conclusion that connects directly back to the topic?"</p>
-                <button class="rotate-btn" onclick="rotatePrompt()">🔄 Rotate Reflection Question</button>
+
+            <!-- MONITOR & REFLECT Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">MONITOR & REFLECT</span>
+                    <h2>HOW Am I Learning?</h2>
+                </div>
+                <label>💡 Stuck Moment Strategy Check:</label>
+                <p style="font-size: 0.75rem; color: #6C757D; margin-top: 0; margin-bottom: 8px;">If stuck evaluating choices, select your strategy:</p>
+                <div>
+                    <button class="strategy-btn" onclick="selectStrategy(this)">⚖️ Consequence Mapping</button>
+                    <button class="strategy-btn" onclick="selectStrategy(this)">🎯 Link Climax to Topic</button>
+                    <button class="strategy-btn" onclick="selectStrategy(this)">💡 Evaluate Growth</button>
+                    <button class="strategy-btn" onclick="selectStrategy(this)">🔍 Audit Resolution</button>
+                </div>
+                
+                <div class="reflection-box">
+                    <label style="color: #003A8C; margin-top: 0; margin-bottom: 6px;">🤔 Metacognitive Reflection:</label>
+                    <p id="reflectionPrompt">"How did evaluating the character's choices help me create a convincing conclusion that connects directly back to the topic?"</p>
+                    <button class="rotate-btn" onclick="rotatePrompt()">🔄 Rotate Reflection Question</button>
+                </div>
             </div>
         </div>
     </div>
 
 <script>
+    // --- ROUTING & DATA PASSING LOGIC ---
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.has('widget')) {
+            // WE ARE IN THE POPUP WIDGET
+            document.getElementById('fmspWidget').style.display = 'flex';
+            
+            // Retrieve saved config from localStorage
+            const savedData = JSON.parse(localStorage.getItem('fmsp_lesson_config'));
+            if (savedData) {
+                document.getElementById('widgetWalt').value = savedData.walt;
+                document.getElementById('widgetWilf1').innerText = savedData.wilf1;
+                document.getElementById('widgetWilf2').innerText = savedData.wilf2;
+                document.getElementById('widgetWilf3').innerText = savedData.wilf3;
+            }
+        } 
+        else {
+            // WE ARE IN THE LAUNCHER SCREEN
+            document.getElementById('launcherScreen').style.display = 'flex';
+        }
+    });
+
+    function launchWidget() {
+        // Save current form values to localStorage
+        const config = {
+            walt: document.getElementById('setupWalt').value,
+            wilf1: document.getElementById('setupWilf1').value,
+            wilf2: document.getElementById('setupWilf2').value,
+            wilf3: document.getElementById('setupWilf3').value
+        };
+        localStorage.setItem('fmsp_lesson_config', JSON.stringify(config));
+
+        // Open popup
+        const widgetUrl = window.location.href.split('?')[0] + "?widget=true";
+        window.open(widgetUrl, "FMSP_Companion", "width=420,height=800,menubar=no,toolbar=no,location=no,status=no");
+    }
+
+    function copyAIPrompt() {
+        const prompt = "I am an English teacher at Fairfield Methodist School (Primary). Please analyze the following lesson topic/syllabus text. Generate 1 WALT (We Are Learning To) statement and 3 levelled WILF (What I'm Looking For) success criteria. Format the WILF as: Level 1 (Basic), Level 2 (Intermediate), Level 3 (Advanced/Topic Connection). \n\n[PASTE TOPIC OR SYLLABUS HERE]";
+        navigator.clipboard.writeText(prompt).then(() => {
+            alert("✨ AI Prompt copied to clipboard! Paste this into Gemini or MagicSchool AI to generate your lesson criteria.");
+        });
+    }
+
+    // --- METACOGNITIVE APP LOGIC ---
     const questions = [
         '"What was the central dilemma in my composition, and why was it challenging for the protagonist?"',
         '"How did weighing the character\'s choices prevent my story from having a cliché or unrealistic plot?"',
