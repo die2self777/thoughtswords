@@ -3,7 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FMSP Classroom Companion — EL Writing Exemplar</title>
+    <title>FMSP Classroom Companion</title>
+    
+    <script>
+        // LAUNCHER LOGIC: Check if the URL has "?widget=true"
+        // If not, render the launcher button and stop loading the rest of the page.
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has('widget')) {
+            document.write(`
+                <div style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; font-family: -apple-system, sans-serif; background-color: #F8F9FA; color: #333;">
+                    <div style="text-align:center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #DEE2E6;">
+                        <h1 style="color: #002B49; margin-top: 0;">FMSP Classroom Companion</h1>
+                        <p style="color: #6C757D; margin-bottom: 25px;">Click below to detach and launch the floating toolbar.</p>
+                        <button onclick="launchWidget()" style="background: #002B49; color: white; border: 2px solid #D4AF37; padding: 12px 24px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s;">
+                            🚀 Launch Floating Widget
+                        </button>
+                    </div>
+                </div>
+            `);
+            
+            function launchWidget() {
+                // Opens this exact same file, but adds "?widget=true" to the URL
+                // popup=yes strips the browser tabs and URL bar
+                const widgetUrl = window.location.href.split('?')[0] + "?widget=true";
+                window.open(widgetUrl, "FMSP_Companion", "width=400,height=800,popup=yes,menubar=no,toolbar=no,location=no,status=no");
+            }
+            // Halt execution so the widget UI doesn't render in the main tab
+            window.stop();
+        }
+    </script>
+
+    <!-- WIDGET UI (Only renders in the popup window) -->
     <style>
         :root {
             --fmsp-navy: #002B49;
@@ -15,71 +45,23 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 0;
-            /* Transparent body allows the widget to float over any LMS or webpage */
-            background-color: transparent; 
-            color: #333;
-        }
-        
-        /* Floating Sidebar Layout */
-        .widget-container {
-            position: fixed;
-            right: 0;
-            top: 0;
-            height: 100vh;
-            width: 380px;
-            z-index: 9999;
             background-color: var(--bg-light);
-            box-shadow: -4px 0 15px rgba(0,0,0,0.15);
+            color: #333;
             display: flex;
             flex-direction: column;
-            transform: translateX(0);
-            transition: transform 0.3s ease-in-out;
+            height: 100vh;
         }
-        
-        .widget-container.collapsed {
-            transform: translateX(100%);
-        }
-
-        /* Collapsible Toggle Tab */
-        .toggle-tab {
-            position: absolute;
-            left: -35px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 35px;
-            height: 100px;
-            background-color: var(--fmsp-navy);
-            color: white;
-            border: 2px solid var(--fmsp-gold);
-            border-right: none;
-            border-radius: 8px 0 0 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: bold;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            box-shadow: -4px 0 8px rgba(0,0,0,0.1);
-            transition: background-color 0.2s;
-        }
-        .toggle-tab:hover {
-            background-color: #003A8C;
-        }
-
         header {
             background-color: var(--fmsp-navy);
             color: white;
-            padding: 15px 20px;
+            padding: 15px;
             border-bottom: 4px solid var(--fmsp-gold);
             flex-shrink: 0;
         }
-        header h1 { margin: 0 0 4px 0; font-size: 1.1rem; font-weight: 600; line-height: 1.2; }
+        header h1 { margin: 0 0 5px 0; font-size: 1.1rem; font-weight: 600; line-height: 1.2; }
         header span { font-size: 0.75rem; opacity: 0.9; display: block; line-height: 1.3; }
         
-        /* Scrollable Single Column */
-        .content-scroll {
+        .container {
             flex: 1;
             overflow-y: auto;
             padding: 15px;
@@ -87,7 +69,6 @@
             flex-direction: column;
             gap: 15px;
         }
-
         .card {
             background: white;
             border-radius: 8px;
@@ -102,7 +83,7 @@
             padding-bottom: 10px;
             margin-bottom: 12px;
         }
-        .card-header h2 { margin: 0; font-size: 0.95rem; color: var(--fmsp-navy); line-height: 1.2; }
+        .card-header h2 { margin: 0; font-size: 0.95rem; color: var(--fmsp-navy); }
         .badge {
             background: var(--fmsp-gold);
             color: var(--fmsp-navy);
@@ -188,21 +169,12 @@
 </head>
 <body>
 
-<!-- Floating Widget Container -->
-<div id="fmspWidget" class="widget-container">
-    
-    <!-- Collapsible Toggle Tab -->
-    <div class="toggle-tab" onclick="toggleSidebar()">
-        COMPANION
-    </div>
-
     <header>
         <h1>FMSP Classroom Companion</h1>
-        <span>EL Writing: Dilemma, Choice & Topic Connection<br>(PLAN • MONITOR • REFLECT)</span>
+        <span>EL Writing: Dilemma, Choice & Topic Connection</span>
     </header>
 
-    <!-- Scrollable Single Column -->
-    <div class="content-scroll">
+    <div class="container">
         <!-- PLAN Card -->
         <div class="card">
             <div class="card-header">
@@ -215,15 +187,15 @@
             <label>✅ WILF / Success Criteria:</label>
             <div class="sc-item">
                 <input type="checkbox" id="sc1">
-                <input type="text" value="🟢 Level 1 (Dilemma & Choices): Identify the core dilemma and list the character's options." id="sc1Text">
+                <input type="text" value="🟢 Level 1: Identify the core dilemma and options." id="sc1Text">
             </div>
             <div class="sc-item">
                 <input type="checkbox" id="sc2">
-                <input type="text" value="🟡 Level 2 (Conclusion & Growth): Craft a conclusion showing realistic consequences and character growth." id="sc2Text">
+                <input type="text" value="🟡 Level 2: Craft a conclusion showing consequences." id="sc2Text">
             </div>
             <div class="sc-item">
                 <input type="checkbox" id="sc3">
-                <input type="text" value="🔵 Level 3 (Topic Connection): Explicitly weave the climax resolution & lesson back to the composition title." id="sc3Text">
+                <input type="text" value="🔵 Level 3: Weave the climax back to the topic." id="sc3Text">
             </div>
         </div>
 
@@ -234,31 +206,23 @@
                 <h2>HOW Am I Learning?</h2>
             </div>
             <label>💡 Stuck Moment Strategy Check:</label>
-            <p style="font-size: 0.75rem; color: #6C757D; margin-top: 0; margin-bottom: 8px;">If stuck evaluating your narrative choices or conclusion, select your strategy:</p>
+            <p style="font-size: 0.75rem; color: #6C757D; margin-top: 0; margin-bottom: 8px;">If stuck evaluating choices, select your strategy:</p>
             <div>
                 <button class="strategy-btn" onclick="selectStrategy(this)">⚖️ Consequence Mapping</button>
                 <button class="strategy-btn" onclick="selectStrategy(this)">🎯 Link Climax to Topic</button>
-                <button class="strategy-btn" onclick="selectStrategy(this)">💡 Evaluate Character Growth</button>
-                <button class="strategy-btn" onclick="selectStrategy(this)">🔍 Audit Resolution vs Topic</button>
+                <button class="strategy-btn" onclick="selectStrategy(this)">💡 Evaluate Growth</button>
+                <button class="strategy-btn" onclick="selectStrategy(this)">🔍 Audit Resolution</button>
             </div>
             
             <div class="reflection-box">
-                <label style="color: #003A8C; margin-top: 0; margin-bottom: 6px;">🤔 Metacognitive Writing Reflection:</label>
+                <label style="color: #003A8C; margin-top: 0; margin-bottom: 6px;">🤔 Metacognitive Reflection:</label>
                 <p id="reflectionPrompt">"How did evaluating the character's choices help me create a convincing conclusion that connects directly back to the topic?"</p>
                 <button class="rotate-btn" onclick="rotatePrompt()">🔄 Rotate Reflection Question</button>
             </div>
         </div>
     </div>
-</div>
 
 <script>
-    // Toggle Sidebar Logic
-    function toggleSidebar() {
-        const widget = document.getElementById('fmspWidget');
-        widget.classList.toggle('collapsed');
-    }
-
-    // Preserved Metacognitive Logic
     const questions = [
         '"What was the central dilemma in my composition, and why was it challenging for the protagonist?"',
         '"How did weighing the character\'s choices prevent my story from having a cliché or unrealistic plot?"',
