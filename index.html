@@ -308,23 +308,48 @@
             // WE ARE IN THE POPUP WIDGET
             document.getElementById('fmspWidget').style.display = 'flex';
             
-            // Retrieve saved config from localStorage
-            const savedData = JSON.parse(localStorage.getItem('fmsp_lesson_config'));
-            if (savedData) {
-                document.getElementById('widgetWalt').value = savedData.walt;
-                document.getElementById('widgetWilf1').innerText = savedData.wilf1;
-                document.getElementById('widgetWilf2').innerText = savedData.wilf2;
-                document.getElementById('widgetWilf3').innerText = savedData.wilf3;
+            // Function to load data from localStorage
+            function loadData() {
+                try {
+                    const savedData = JSON.parse(localStorage.getItem('fmsp_lesson_config'));
+                    if (savedData) {
+                        document.getElementById('widgetWalt').value = savedData.walt || "";
+                        document.getElementById('widgetWilf1').innerText = savedData.wilf1 || "";
+                        document.getElementById('widgetWilf2').innerText = savedData.wilf2 || "";
+                        document.getElementById('widgetWilf3').innerText = savedData.wilf3 || "";
+                    }
+                } catch (e) {
+                    console.error("Could not load FMSP data", e);
+                }
             }
+
+            // Load immediately on open
+            loadData();
+
+            // LIVE SYNC: Listen for changes from the main window in real-time
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'fmsp_lesson_config') {
+                    loadData();
+                }
+            });
+
         } 
         else {
             // WE ARE IN THE LAUNCHER SCREEN
             document.getElementById('launcherScreen').style.display = 'flex';
+
+            // Automatically save data to memory as the user types
+            const inputs = ['setupWalt', 'setupWilf1', 'setupWilf2', 'setupWilf3'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.addEventListener('input', saveConfig);
+                }
+            });
         }
     });
 
-    function launchWidget() {
-        // Save current form values to localStorage
+    function saveConfig() {
         const config = {
             walt: document.getElementById('setupWalt').value,
             wilf1: document.getElementById('setupWilf1').value,
@@ -332,10 +357,17 @@
             wilf3: document.getElementById('setupWilf3').value
         };
         localStorage.setItem('fmsp_lesson_config', JSON.stringify(config));
+    }
 
-        // Open popup
-        const widgetUrl = window.location.href.split('?')[0] + "?widget=true";
-        window.open(widgetUrl, "FMSP_Companion", "width=420,height=800,menubar=no,toolbar=no,location=no,status=no");
+    function launchWidget() {
+        saveConfig(); // Ensure the absolute latest text is saved
+        
+        // Add a timestamp to the URL to force the browser to load a fresh window, bypassing the cache
+        const timestamp = new Date().getTime();
+        const widgetUrl = window.location.href.split('?')[0] + "?widget=true&t=" + timestamp;
+        
+        // Open the popup window
+        window.open(widgetUrl, "FMSP_Companion_Widget", "width=420,height=800,menubar=no,toolbar=no,location=no,status=no");
     }
 
     function copyAIPrompt() {
